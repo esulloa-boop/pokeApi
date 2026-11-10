@@ -1,0 +1,96 @@
+<ion-header>
+  <ion-toolbar class="dex-toolbar">
+    <div class="hardware-bar">
+      <div class="sensor-cluster" aria-hidden="true">
+        <span class="sensor-lens"></span>
+        <div class="status-lights"><i></i><i></i><i></i></div>
+      </div>
+      <a routerLink="/pokemon" class="hardware-identity" aria-label="Peta Pokédex, inicio">
+        <span class="hardware-kicker">ENCICLOPEDIA POKÉMON</span>
+        <strong>POKÉDEX<span>01</span></strong>
+        <span class="hardware-subtitle">PETA · EDICIÓN ROJA</span>
+      </a>
+      <span class="hardware-source">DATOS DE<br /><strong>PokéAPI</strong></span>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <main class="page-shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="lcd-panel">
+          <span class="eyebrow">TU AVENTURA EMPIEZA AQUÍ</span>
+          <h1 id="hero-title">Atrapa el <br /><span>conocimiento.</span></h1>
+          <p>Busca un Pokémon y abre su ficha para descubrir sus tipos, medidas y estadísticas.</p>
+          <div class="lcd-readout"><span>REGISTROS DISPONIBLES</span><strong>{{ total() ? (total() | number) : '— — —' }}</strong></div>
+        </div>
+        <div class="console-controls" aria-hidden="true">
+          <span class="round-control"></span><div class="control-bars"><i></i><i></i><span>PETA / PKDX-01</span></div><span class="direction-pad"></span>
+        </div>
+      </div>
+      <a class="featured" routerLink="/detail/25" aria-label="Ver ficha de Pikachu">
+        <div class="screen-indicators" aria-hidden="true"><i></i><i></i></div>
+        <div class="featured-screen">
+          <div class="featured-top"><span>POKÉMON DESTACADO</span><span>N.º 025</span></div>
+          <div class="artwork-circle" aria-hidden="true"></div>
+          <img class="featured-art" src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" alt="Pikachu" width="260" height="260" (error)="imageFallback($event)" />
+          <div class="featured-bottom">
+            <div><ion-badge>ELÉCTRICO</ion-badge><h2>Pikachu</h2></div>
+            <span class="featured-arrow"><ion-icon name="arrow-forward-outline" aria-hidden="true" /></span>
+          </div>
+        </div>
+        <div class="screen-bottom"><span class="screen-power" aria-hidden="true"></span><span>ABRIR FICHA</span><span class="speaker" aria-hidden="true"></span></div>
+      </a>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-title">
+      <div class="catalog-heading">
+        <div><span class="eyebrow">BASE DE DATOS</span><h2 id="catalog-title">Explorar Pokémon<span class="red-dot">_</span></h2></div>
+        <span class="catalog-emblem" aria-hidden="true"><img src="assets/pokeball.svg" alt="" width="30" height="30" /></span>
+      </div>
+      <form class="search-form" (ngSubmit)="search()" role="search">
+        <ion-searchbar name="pokemon" [(ngModel)]="query" placeholder="Nombre / n.º" aria-label="Buscar Pokémon por nombre exacto o número" [debounce]="0" (ionClear)="clearSearch()" />
+        <ion-button type="submit" [disabled]="loading()">Buscar<ion-icon slot="end" name="search-outline" aria-hidden="true" /></ion-button>
+      </form>
+      <div class="list-meta" aria-live="polite">
+        <span>{{ searchActive() ? 'Resultado de la búsqueda' : 'La colección' }} <span class="item-count">{{ pokemon().length }}</span></span>
+        @if (searchActive()) {
+          <ion-button fill="clear" size="small" (click)="clearSearch()">Ver todos</ion-button>
+        } @else {
+          <span class="sort-label">Ordenados por número</span>
+        }
+      </div>
+
+      <ion-list class="pokemon-grid" lines="none" aria-label="Lista de Pokémon" [attr.aria-busy]="loading()">
+        @for (item of pokemon(); track item.id) {
+          <ion-item class="pokemon-item" [routerLink]="['/detail', item.id]" [detail]="false" [attr.aria-label]="'Ver ficha de ' + formatName(item.name)">
+            <ion-thumbnail slot="start"><img [src]="item.image" [alt]="formatName(item.name)" loading="lazy" width="88" height="88" (error)="imageFallback($event)" /></ion-thumbnail>
+            <ion-label><span class="pokemon-number">{{ formatId(item.id) }}</span><h3>{{ formatName(item.name) }}</h3><p>Ver ficha</p></ion-label>
+            <ion-icon class="row-arrow" name="arrow-forward-outline" slot="end" aria-hidden="true" />
+          </ion-item>
+        }
+        @if (loading() && !pokemon().length) {
+          @for (skeleton of skeletons; track skeleton) {
+            <ion-item class="skeleton-item" aria-hidden="true"><ion-thumbnail slot="start"><ion-skeleton-text [animated]="true" /></ion-thumbnail><ion-label><ion-skeleton-text [animated]="true" style="width: 40%" /><ion-skeleton-text [animated]="true" style="width: 70%" /></ion-label></ion-item>
+          }
+        }
+      </ion-list>
+
+      @if (error()) {
+        <div class="status-panel error-panel" role="alert"><span class="error-mark" aria-hidden="true">!</span><h3>Vamos a intentarlo de nuevo</h3><p>{{ error() }}</p><ion-button fill="outline" (click)="retry()"><ion-icon name="refresh-outline" slot="start" aria-hidden="true" />Reintentar</ion-button></div>
+      }
+      @if (loading()) {
+        <div class="loading-status" role="status"><ion-spinner name="crescent" /> Cargando Pokémon…</div>
+      }
+      @if (!searchActive() && !error() && pokemon().length) {
+        <div class="load-more">
+          <p>{{ pokemon().length | number }} de {{ total() | number }} Pokémon</p>
+          @if (hasMore()) { <ion-button fill="outline" (click)="loadPage()" [disabled]="loading()">Cargar 25 más<ion-icon slot="end" name="arrow-forward-outline" aria-hidden="true" /></ion-button> }
+          @else { <p>¡Ya exploraste toda la colección!</p> }
+        </div>
+      }
+    </section>
+    <footer><span class="footer-brand">PETA / PKDX-01</span><span>Tu compañero de aventuras.</span><a href="https://pokeapi.co/" target="_blank" rel="noopener noreferrer">Datos de PokéAPI ↗</a></footer>
+  </main>
+</ion-content>

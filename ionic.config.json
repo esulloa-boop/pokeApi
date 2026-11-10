@@ -1,0 +1,5 @@
+{
+  "name": "peta-pokedex",
+  "type": "angular",
+  "integrations": { "capacitor": {} }
+}

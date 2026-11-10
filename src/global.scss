@@ -1,0 +1,101 @@
+@import '@ionic/angular/css/core.css';
+@import '@ionic/angular/css/normalize.css';
+@import '@ionic/angular/css/structure.css';
+@import '@ionic/angular/css/typography.css';
+@import '@ionic/angular/css/display.css';
+@import '@ionic/angular/css/padding.css';
+@import '@ionic/angular/css/flex-utils.css';
+
+:root {
+  color-scheme: light;
+  --ion-font-family: 'Segoe UI', Inter, system-ui, -apple-system, sans-serif;
+  --ion-background-color: #121820;
+  --ion-text-color: #243b33;
+  --ion-color-primary: #c51d3c;
+  --ion-color-primary-rgb: 197, 29, 60;
+  --ion-color-primary-contrast: #fff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #ad1a35;
+  --ion-color-primary-tint: #cb3450;
+  --ion-color-secondary: #255b52;
+  --ion-color-secondary-rgb: 37, 91, 82;
+  --ion-color-secondary-contrast: #fff;
+  --ion-color-secondary-shade: #215049;
+  --ion-color-secondary-tint: #3b6b63;
+  --ion-toolbar-background: #121820;
+  --ion-item-background: #f7faed;
+  --ion-card-background: #eaf2d1;
+  --dex-red: #dc2945;
+  --dex-deep-red: #740d25;
+  --dex-screen: #eaf2d1;
+  --dex-ink: #243b33;
+  --dex-mono: 'Cascadia Code', 'Consolas', monospace;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; background: #121820; }
+ion-button { --border-radius: 10px; text-transform: none; font-weight: 700; letter-spacing: 0; }
+ion-back-button { text-transform: none; }
+ion-header { box-shadow: none !important; }
+ion-toolbar { --border-width: 0; }
+button, a, ion-button, ion-item { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #36bce6; outline-offset: 4px; }
+
+.dex-toolbar { --background: #121820; --padding-top: 0; --padding-bottom: 0; padding-top: 0 !important; }
+.hardware-bar {
+  position: relative; display: flex; align-items: center; gap: 30px;
+  max-width: 1180px; min-height: 136px; margin: 20px auto 0; padding: 22px 40px 28px;
+  color: #fff; background: linear-gradient(120deg, #f24b59 0%, #df2d49 50%, #bf1c3b 100%);
+  border: 3px solid #740d25; border-bottom-width: 4px; border-radius: 32px 32px 0 0;
+  box-shadow: inset 0 3px 0 #ff929c99, inset 3px 0 0 #ff6d7c55, inset -5px 0 0 #a2133155;
+}
+.hardware-bar::after {
+  content: ''; position: absolute; bottom: -4px; left: -3px; width: 48%; height: 13px;
+  background: #a21632; clip-path: polygon(0 0, 76% 0, 81% 77%, 100% 77%, 100% 100%, 0 100%);
+}
+.sensor-cluster { display: flex; gap: 17px; align-items: flex-start; flex-shrink: 0; }
+.sensor-lens {
+  position: relative; display: block; width: 76px; height: 76px; border: 6px solid #e9eef0; border-radius: 50%;
+  background: radial-gradient(circle at 34% 26%, #efffff 0 7%, #98efff 9%, #41cef5 26%, #179ed6 58%, #075c96 84%);
+  box-shadow: 0 0 0 3px #82142d, 0 5px 0 #861229, inset 0 0 0 3px #54dcf8, inset -4px -5px 8px #06577d;
+}
+.sensor-lens::after { content: ''; position: absolute; top: 12%; left: 12%; width: 29%; height: 19%; border-radius: 50%; background: #ffffffb3; transform: rotate(-35deg); }
+.status-lights { display: flex; gap: 8px; margin-top: 4px; }
+.status-lights i { width: 14px; height: 14px; display: block; border-radius: 50%; border: 2px solid #6d1326; background: radial-gradient(circle at 30% 25%, #ffb2ac, #f44a48 50%, #a71523); box-shadow: 0 2px 1px #8d1837; }
+.status-lights i:nth-child(2) { background: radial-gradient(circle at 30% 25%, #fff5c2, #f4c744 50%, #a36a11); }
+.status-lights i:nth-child(3) { background: radial-gradient(circle at 30% 25%, #d5ffac, #7ed85d 50%, #2f843d); }
+.hardware-identity { display: flex; flex-direction: column; gap: 3px; text-decoration: none; color: #fff; }
+.hardware-kicker { font: 9px var(--dex-mono); letter-spacing: 2px; color: #ffd8df; }
+.hardware-identity strong { font-size: 35px; font-weight: 900; line-height: 1.05; letter-spacing: 2px; font-style: italic; text-shadow: 0 3px 0 #97132e; }
+.hardware-identity strong span { display: inline-block; margin-left: 5px; font-size: 12px; vertical-align: top; margin-top: 2px; }
+.hardware-subtitle { font: 9px var(--dex-mono); letter-spacing: 3px; margin-top: 4px; color: #ffdbe2; }
+.hardware-source { margin-left: auto; padding: 10px 16px; border: 1px solid #ff8da06b; border-radius: 8px; text-align: right; font: 8px/1.6 var(--dex-mono); letter-spacing: 1px; color: #ffd5dc; background: #8e102533; }
+.hardware-source strong { font: 700 17px 'Segoe UI', sans-serif; letter-spacing: 0; color: #fff; }
+.hardware-back { margin-left: auto; }
+.hardware-back ion-back-button { --color: #fff; --background: #95132f; --background-hover: #740d25; --border-radius: 10px; min-height: 40px; font-size: 14px; }
+
+@media (max-width: 1200px) {
+  .hardware-bar { margin-left: 14px; margin-right: 14px; }
+}
+@media (max-width: 600px) {
+  .hardware-bar { margin: 8px 8px 0; min-height: 105px; padding: 18px 17px 22px; border-radius: 24px 24px 0 0; gap: 17px; }
+  .sensor-cluster { gap: 8px; }
+  .sensor-lens { width: 52px; height: 52px; border-width: 4px; }
+  .status-lights { gap: 4px; }
+  .status-lights i { width: 9px; height: 9px; border-width: 1px; }
+  .hardware-identity strong { font-size: 25px; letter-spacing: 1px; }
+  .hardware-kicker { font-size: 6px; letter-spacing: 1px; }
+  .hardware-subtitle { font-size: 7px; letter-spacing: 1px; }
+  .hardware-source { display: none; }
+  .hardware-back ion-back-button { font-size: 0; --padding-start: 7px; --padding-end: 7px; }
+  .hardware-bar:has(.hardware-back) { gap: 12px; }
+  .hardware-bar:has(.hardware-back) .status-lights { display: none; }
+}
+@media (max-width: 360px) {
+  .hardware-identity strong { font-size: 22px; }
+  .hardware-bar { gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+

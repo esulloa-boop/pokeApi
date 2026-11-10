@@ -1,0 +1,157 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="dex-toolbar">
+    <div class="hardware-bar">
+      <div class="sensor-cluster" aria-hidden="true">
+        <span class="sensor-lens"></span>
+        <div class="status-lights"><i></i><i></i><i></i></div>
+      </div>
+      <div class="hardware-identity">
+        <span class="hardware-kicker">ENCICLOPEDIA POKÉMON</span>
+        <strong>POKÉDEX</strong>
+        <span class="hardware-subtitle">Ficha de exploración</span>
+      </div>
+      <ion-buttons class="hardware-back">
+        <ion-back-button defaultHref="/pokemon" text="Volver" aria-label="Volver al listado de Pokémon"></ion-back-button>
+      </ion-buttons>
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <main class="detail-shell">
+    @if (loading()) {
+      <section class="loading-state" role="status" aria-live="polite" aria-label="Cargando información del Pokémon">
+        <p class="eyebrow">UN MOMENTO, ENTRENADOR</p>
+        <h1>Cargando la ficha…</h1>
+        <ion-card>
+          <ion-card-content>
+            <ion-skeleton-text [animated]="true" class="skeleton-heading"></ion-skeleton-text>
+            <ion-skeleton-text [animated]="true" class="skeleton-artwork"></ion-skeleton-text>
+            <ion-skeleton-text [animated]="true" class="skeleton-line"></ion-skeleton-text>
+          </ion-card-content>
+        </ion-card>
+      </section>
+    } @else if (error()) {
+      <section class="error-state" role="alert">
+        <span class="error-symbol" aria-hidden="true">?</span>
+        <p class="eyebrow">{{ notFound() ? 'POKÉMON NO ENCONTRADO' : 'CONEXIÓN INTERRUMPIDA' }}</p>
+        <h1>{{ notFound() ? 'Esta ficha no existe' : 'No pudimos abrir la ficha' }}</h1>
+        <p>{{ error() }}</p>
+        @if (!notFound()) {
+          <ion-button (click)="retry()">Reintentar</ion-button>
+        }
+      </section>
+    } @else if (pokemon(); as pokemon) {
+      <div class="page-intro">
+        <p class="eyebrow">MÓDULO 02 <span>/</span> FICHA POKÉMON</p>
+        <span class="source-note">DATOS: POKÉAPI</span>
+      </div>
+
+      <ion-card class="hero-card">
+        <ion-grid class="hero-grid">
+          <div class="monitor-heading">
+            <span><i aria-hidden="true"></i> REGISTRO {{ formatId(pokemon.id) }}</span>
+            <span>POKÉDEX / INFO</span>
+          </div>
+          <ion-row class="hero-row">
+            <ion-col size="12" size-md="6" class="hero-copy">
+              <span class="pokemon-number">{{ formatId(pokemon.id) }}</span>
+              <h1>{{ formatName(pokemon.name) }}</h1>
+              <div class="type-list" aria-label="Tipos del Pokémon">
+                @for (entry of pokemon.types; track entry.slot) {
+                  <ion-badge class="type-badge" [attr.data-type]="entry.type.name">
+                    {{ typeLabels[entry.type.name] || formatName(entry.type.name) }}
+                  </ion-badge>
+                }
+              </div>
+              <p class="hero-description">Ficha de identificación. Consulta sus características físicas y analiza sus estadísticas de combate.</p>
+
+              <ion-grid class="measurements">
+                <ion-row>
+                  <ion-col size="6">
+                    <span class="metric-label">ALTURA</span>
+                    <p class="metric-value">{{ metric(pokemon.height) }} <span>m</span></p>
+                  </ion-col>
+                  <ion-col size="6">
+                    <span class="metric-label">PESO</span>
+                    <p class="metric-value">{{ metric(pokemon.weight) }} <span>kg</span></p>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-col>
+
+            <ion-col size="12" size-md="6" class="artwork-column">
+              <div class="artwork-stage">
+                <div class="artwork-ring" aria-hidden="true"></div>
+                @if (artwork() && !imageUnavailable()) {
+                  <img class="pokemon-artwork" [src]="artwork()" [alt]="'Ilustración oficial de ' + formatName(pokemon.name)" width="475" height="475" (error)="imageUnavailable.set(true)">
+                } @else {
+                  <div class="image-placeholder" role="img" [attr.aria-label]="'Imagen no disponible de ' + formatName(pokemon.name)">
+                    <span aria-hidden="true">?</span>
+                    <p>Imagen no disponible</p>
+                  </div>
+                }
+              </div>
+              <span class="artwork-caption">{{ formatId(pokemon.id) }} · {{ formatName(pokemon.name) }}</span>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="monitor-bezel" aria-hidden="true">
+          <span class="bezel-dot"></span>
+          <span class="bezel-label">POKÉMON DATA SYSTEM</span>
+          <div class="speaker-grille"><i></i><i></i><i></i></div>
+        </div>
+      </ion-card>
+
+      <div class="detail-grid">
+        <ion-card class="stats-card">
+          <ion-card-content>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">LECTURA DE PARÁMETROS</p>
+                <h2>Estadísticas base</h2>
+              </div>
+              <span class="total-stats">{{ totalStats() }} <small>Total</small></span>
+            </div>
+            <div class="stats-list">
+              @for (entry of pokemon.stats; track entry.stat.name) {
+                <div class="stat-row">
+                  <div class="stat-label">
+                    <span>{{ statLabels[entry.stat.name] || formatName(entry.stat.name) }}</span>
+                    <strong>{{ entry.base_stat }}</strong>
+                  </div>
+                  <ion-progress-bar [value]="statProgress(entry.base_stat)" [attr.aria-label]="(statLabels[entry.stat.name] || entry.stat.name) + ': ' + entry.base_stat + ' de 255'" [attr.aria-valuenow]="entry.base_stat" aria-valuemin="0" aria-valuemax="255"></ion-progress-bar>
+                </div>
+              }
+            </div>
+            <p class="scale-note">Todas las barras usan una escala común de 0 a 255.</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="abilities-card">
+          <ion-card-content>
+            <p class="eyebrow">REGISTRO DE CAPACIDADES</p>
+            <h2>Habilidades</h2>
+            <p class="ability-intro">Sus capacidades especiales durante el combate.</p>
+            <div class="ability-list">
+              @for (entry of pokemon.abilities; track entry.slot) {
+                <div class="ability-item">
+                  <span>{{ formatName(entry.ability.name) }}</span>
+                  @if (entry.is_hidden) {
+                    <ion-badge class="hidden-badge">Oculta</ion-badge>
+                  }
+                </div>
+              }
+            </div>
+            <p class="ability-note">Nombres de habilidades según PokéAPI.</p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <footer class="detail-footer">
+        <div class="device-dpad" aria-hidden="true"><span></span></div>
+        <p>EXPLORA · DESCUBRE · CONOCE<span>Información del mundo Pokémon, en tus manos.</span></p>
+        <div class="device-buttons" aria-hidden="true"><i></i><i></i></div>
+      </footer>
+    }
+  </main>
+</ion-content>
